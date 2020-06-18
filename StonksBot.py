@@ -9,7 +9,6 @@ from discord.ext import commands
 
 load_dotenv()
 TOKEN = os.getenv('DISCORD_TOKEN')
-GUILD = os.getenv('DISCORD_GUILD')
 FIN_TOKEN = os.getenv('FINNHUB_KEY')
 
 configuration = finnhub.Configuration(
@@ -30,7 +29,7 @@ async def on_ready():
 
 
 @bot.command(name='roll_dice', help='Simulates rolling dice.')
-async def roll(ctx, number_of_dice: int, number_of_sides: int):
+async def roll_dice(ctx, number_of_dice: int, number_of_sides: int):
     dice = [
         str(random.choice(range(1, number_of_sides + 1)))
         for _ in range(number_of_dice)
@@ -38,7 +37,7 @@ async def roll(ctx, number_of_dice: int, number_of_sides: int):
     await ctx.send(', '.join(dice))
 
 @bot.command(name='flip_coin', help='Simulates flipping a coin. Bull = Head, Bear = Tails')
-async def flip(ctx):
+async def flip_coin(ctx):
     flip = random.randint(0, 1)
     c = "Bull" if flip == 1 else "Bear"
     await ctx.send(c)
@@ -64,7 +63,7 @@ async def profile(ctx, ticker):
     prof = f'__{company.name} ({company.ticker})__\n{company.weburl}\nMarket Cap: {mkt_cap}\nShares Outstanding: {company.share_outstanding}\nIndustry: {company.finnhub_industry}'
     await ctx.send(prof)
 
-@bot.command(name='ta', help='"$ta [ticker] ["1,5,15,30,60,D,W,M"] [from:mm/dd/yy] [to:mm/dd/yy] [indicator]"  "$help indicator" to see all supported indicators"')
+@bot.command(name='ta', help='$ta <ticker> <"1,5,15,30,60,D,W,M"> <from:mm/dd/yy> <to:mm/dd/yy> <indicator>"  "$help indicator" to see all supported indicators')
 async def ta(ctx, ticker, res, start, end, indicator):
     indicator = indicator.lower()
     print(indicator)

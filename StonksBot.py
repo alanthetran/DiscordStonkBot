@@ -4,6 +4,7 @@ import discord
 import finnhub
 import locale
 import json
+import err
 
 from datetime import datetime
 from dotenv import load_dotenv
@@ -51,6 +52,14 @@ async def price(ctx, ticker):
     p = f'__Ticker: {ticker}__\nOpen: {quote.o}\nHigh: {quote.h}\nLow: {quote.l}\nCurrent: {quote.c}\nPrevious Close: {quote.pc}'
     await ctx.send(p)
 
+@price.error
+async def price_error(ctx,error):
+    if isinstance(error,commands.MissingRequiredArgument):
+        await ctx.send("Error missing parameters, Usage: $price <ticker>")
+    if isinstance(error,commands.BadArgument):
+        await ctx.send("Error bad arguments")
+    if isinstance(error, )
+
 @bot.command(name='sentiment', help='<ticker> News Sentiment Score, Aggregated from different sources')
 async def sentiment(ctx, ticker):
     ticker = ticker.upper()
@@ -77,8 +86,6 @@ async def cnews(ctx,ticker,start,end):
     res = ''
     ticker = ticker.upper()
     json_arr = finnhub_client.company_news(ticker, _from=start, to=end)
-    #json_dict = json.load(json_arr)
-    print(json_arr)
     for idx in range(len(json_arr)):
         dt_obj = datetime.fromtimestamp(json_arr[idx].datetime)
         res = f'__{ticker} News__\nDate: {dt_obj}\nSource: {json_arr[idx].source}\nHeadline: {json_arr[idx].headline}\nURL: {json_arr[idx].url} '
@@ -92,7 +99,7 @@ async def sup_res(ctx,ticker,res):
     try:
         quote = finnhub_client.quote(ticker)
     except:
-        print("")
+        ctx.send("API request error")
     if res.isalpha():
         res = res.upper()
     json_str = finnhub_client.support_resistance(ticker,res)

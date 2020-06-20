@@ -65,6 +65,13 @@ async def sentiment(ctx, ticker):
     score = finnhub_client.news_sentiment(ticker)
     await ctx.send(score)
 
+@sentiment.error
+async def sentiment_error(ctx,error):
+    if isinstance(error,commands.MissingRequiredArgument):
+        await ctx.send("Error missing parameters")
+    if isinstance(error,commands.BadArgument):
+        await ctx.send("Error bad arguments")
+
 @bot.command(name='profile', help='Get general information of a company')
 async def profile(ctx, ticker):
     ticker = ticker.upper()
@@ -73,12 +80,24 @@ async def profile(ctx, ticker):
         mkt_cap = locale.currency(company.market_capitalization,grouping=True)
     prof = f'__{company.name} ({company.ticker})__\n{company.weburl}\nMarket Cap: {mkt_cap}\nShares Outstanding: {company.share_outstanding}\nIndustry: {company.finnhub_industry}'
     await ctx.send(prof)
+@profile.error
+async def profile_error(ctx,error):
+    if isinstance(error,commands.MissingRequiredArgument):
+        await ctx.send("Error missing parameters")
+    if isinstance(error,commands.BadArgument):
+        await ctx.send("Error bad arguments")
 
 @bot.command(name='ta', help='<ticker> <1,5,15,30,60,D,W,M> <from:mm/dd/yy> <to:mm/dd/yy> <indicator>"  "$help indicator" to see all supported indicators')
 async def ta(ctx, ticker, res, start, end, indicator):
     indicator = indicator.lower()
     print(indicator)
     await ctx.send(indicator)
+@sentiment.error
+async def sentiment_error(ctx,error):
+    if isinstance(error,commands.MissingRequiredArgument):
+        await ctx.send("Error missing parameters")
+    if isinstance(error,commands.BadArgument):
+        await ctx.send("Error bad arguments")
 
 @bot.command(name='cnews', help='company news, between date YYYY-MM-DD and YYYY-MM-DD up to 1 year past news')
 async def cnews(ctx,ticker,start,end):
@@ -89,6 +108,12 @@ async def cnews(ctx,ticker,start,end):
         dt_obj = datetime.fromtimestamp(json_arr[idx].datetime)
         res = f'__{ticker} News__\nDate: {dt_obj}\nSource: {json_arr[idx].source}\nHeadline: {json_arr[idx].headline}\nURL: {json_arr[idx].url} '
         await ctx.send(res)
+@cnews.error
+async def cnews_error(ctx,error):
+    if isinstance(error,commands.MissingRequiredArgument):
+        await ctx.send("Error missing parameters")
+    if isinstance(error,commands.BadArgument):
+        await ctx.send("Error bad arguments")
 
 @bot.command(name='sup_res', help="<ticker> <1,5,15,30,60,D,W,M> Return support and resistance levels ")
 async def sup_res(ctx,ticker,res):
@@ -108,6 +133,12 @@ async def sup_res(ctx,ticker,res):
         else:
             support = support + str(price) + ", "
     await ctx.send("Current: " + str(quote.c) + "\n" + resistance + "\n" + support)
+@sup_res.error
+async def sup_res_error(ctx,error):
+    if isinstance(error,commands.MissingRequiredArgument):
+        await ctx.send("Error missing parameters")
+    if isinstance(error,commands.BadArgument):
+        await ctx.send("Error bad arguments")
 
 @bot.command(name="ta_sentiment", help="<ticker> <1,5,15,30,60,D,W,M> Get aggregate signal of multiple technical indicators such as MACD, RSI, Moving Average v.v.")
 async def ta_sentiment(ctx,ticker,res):
@@ -116,5 +147,11 @@ async def ta_sentiment(ctx,ticker,res):
         res = res.upper()
     json_str = finnhub_client.aggregate_indicator(ticker,res)
     await ctx.send(json_str)
+@ta_sentiment.error
+async def ta_sentiment_error(ctx,error):
+    if isinstance(error,commands.MissingRequiredArgument):
+        await ctx.send("Error missing parameters")
+    if isinstance(error,commands.BadArgument):
+        await ctx.send("Error bad arguments")
 
 bot.run(TOKEN)

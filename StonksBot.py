@@ -58,7 +58,6 @@ async def price_error(ctx,error):
         await ctx.send("Error missing parameters, Usage: $price <ticker>")
     if isinstance(error,commands.BadArgument):
         await ctx.send("Error bad arguments")
-    if isinstance(error, )
 
 @bot.command(name='sentiment', help='<ticker> News Sentiment Score, Aggregated from different sources')
 async def sentiment(ctx, ticker):
